@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}User Login{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md-offset-3 col-md-6">
+        
+        <h3>User Login</h3>
+        
+        {% if error %}
+        <div class="error text-danger"> {{ error }}</div>
+        {% endif %}
+        <!-- Use template macros as you shouldn't be repeating yourself -->
+        {% from "_formhelpers.html" import render_field %}
+        
+        <form method="POST" action="{{ url_for('login') }}" role="form">
+            
+            <!-- csrf token - hidden tag to stop hackers, always use this, creates a cookie thats unique -->
+            {{ form.hidden_tag() }}
+            
+            {{ render_field(form.username, class='form-control') }} <!-- form-control is a kwargs -->
+            {{ render_field(form.password, class='form-control') }}
+            
+            
+            
+            <button type="submit" class="btn btn-default">Login</button>
+            
+        </form>
+        
+    </div>
+</div>
+
+{% endblock %}

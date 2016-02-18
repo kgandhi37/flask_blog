@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Blog Post{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-offset-3 col-md-6">
+        
+        
+        {% if action == "new" %}
+        <h3>New Blog Post</h3>
+        {% else %}
+        <h3>Edit Post</h3>
+        {% endif %}
+        
+        {% from "_formhelpers.html" import render_field %}
+        
+        {% if action == "new" %}
+        <form method="POST" action="{{ url_for('post') }}" enctype="multipart/form-data" role="form"> <!-- multipart allow handling images -->
+        {% else %}
+        <form method="POST" action="{{ url_for('edit', post_id=post.id) }}" enctype="multipart/form-data" role="form">
+        {% endif %}
+            
+            {{ form.hidden_tag() }}
+            <h4>Create your Blog Post</h4>
+            
+            {% if post and post.image %} <!-- post passed and then check for image -->
+            <img src="{{ post.imgsrc }}" height="100px" class="img-rounded" />
+            {% endif %}
+            
+            {{ render_field(form.image, class='form-control') }}
+            {{ render_field(form.title, class='form-control') }}
+            {{ render_field(form.body, class='form-control', rows=10) }} <!-- form-control is a kwargs, rows to define how big textarea -->
+            {{ render_field(form.category, class='form-control') }}
+            {{ render_field(form.new_category, class='form-control') }}
+            
+            
+            
+            
+            <button type="submit" class="btn btn-default">Create Post</button>
+            
+        </form>
+        
+    </div>
+</div>
+{% endblock %}
