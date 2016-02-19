@@ -111,31 +111,11 @@ def post():
         
     return render_template('blog/post.html', form=form, comment_form=comment_form, action="new")
 
-@app.route('/comment/<post_id>', methods=('GET','POST'))
-def comment(post_id):
-    form = CommentForm()
-    error = None
-    if form.validate_on_submit():
-        check_post = Post.query.filter_by(id=post_id).first()
-        slug = check_post.slug
-        if check_post:
-            author = Author.query.filter_by(username=session['username']).first()
-            comment_body = form.comment_body.data
-            comment = Comment(comment_body, post_id, author.id)
-            db.session.add(comment)
-            db.session.commit()
-            return redirect(url_for('article', slug=slug))
-            flash("Comment posted!")
-        else:
-            error = "Something went wrong, we couldn't find the post you are trying to comment on"
-
-    return abort(403)
-
     
     
 
 # rendering article
-@app.route('/article/<slug>') # article by slug, pass through function below.
+@app.route('/article/<slug>', methods=('GET','POST')) # article by slug, pass through function below.
 def article(slug):
     form = CommentForm()
     post = Post.query.filter_by(slug=slug).first_or_404() # either find the post or return 404
@@ -146,6 +126,17 @@ def article(slug):
         is_comment = 0
     else:
         is_comment = 1
+
+    # posting a comment
+
+    error = None
+    if form.validate_on_submit():
+        author = Author.query.filter_by(username=session['username']).first()
+        comment_body = form.comment_body.data
+        comment = Comment(comment_body, post.id, author.id)
+        db.session.add(comment)
+        db.session.commit()
+        flash("Comment posted!")
     return render_template('blog/article.html', post=post, comments=comments, form=form, is_comment=is_comment) # running the returned object from query above "post" in the article file
     
 @app.route('/edit/<int:post_id>', methods=('GET','POST'))

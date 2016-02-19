@@ -58,7 +58,7 @@
 
         {% if session.get('username') %}
 
-        <form method="POST" action="{{ url_for('comment', post_id=post.id) }}" enctype="multipart/form-data" role="form">
+        <form method="POST" action="{{ url_for('article', slug=post.slug) }}" enctype="multipart/form-data" role="form">
         {% from "_formhelpers.html" import render_field %}
         {{ form.hidden_tag() }}
 
