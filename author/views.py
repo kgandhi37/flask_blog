@@ -1,23 +1,21 @@
-# views in flask is the controller. templates hold the view
-
 from flask_blog import app, db
-from flask import render_template, redirect, url_for, session, request, flash # session to store login, build this as you need more stuff
+from flask import render_template, redirect, url_for, session, request, flash 
 from author.form import RegisterForm, LoginForm # importing classes from form.py
 from author.models import Author
 from author.decorators import login_required
 import bcrypt
 
-@app.route('/login', methods=('GET','POST')) # @ is a decorator (modifier) basically modifies the function below it
+@app.route('/login', methods=('GET','POST')) 
 def login():
-    form = LoginForm() # calling LoginForm
+    form = LoginForm() 
     error = None
     
     if request.method == 'GET' and request.args.get('next'):
         session['next'] = request.args.get('next', None)
-    if form.validate_on_submit(): # querying db for author with username and password
+    if form.validate_on_submit(): 
         author = Author.query.filter_by(
             username = form.username.data,
-            ).first() # gets the first record - can use limit(1)
+            ).first()
         if author:
             if bcrypt.hashpw(form.password.data, author.password) == author.password: # using bcrypt to check pass
                 session['username'] = form.username.data
@@ -39,7 +37,7 @@ def login():
 @app.route('/register', methods=('GET','POST'))
 def register():
     form = RegisterForm()
-    if form.validate_on_submit(): # checking for valid form entry, on form.py we defined required fields, lengths etc
+    if form.validate_on_submit():
         salt = bcrypt.gensalt()
         hashed_password = bcrypt.hashpw(form.password.data, salt)
         author = Author(

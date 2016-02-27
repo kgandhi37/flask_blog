@@ -5,8 +5,7 @@ class Blog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
     admin = db.Column(db.Integer, db.ForeignKey('author.id')) # links to author, specific admin of the blog
-    posts = db.relationship('Post', backref='blog', lazy='dynamic') # for alchemy, allows relationship so when you do Blog.posts you get a list of posts
-    # backref is back to blog from post, and lazy means don't necessarily fetch all post of blog unless asked for.
+    posts = db.relationship('Post', backref='blog', lazy='dynamic') 
     
     def __init__(self, name, admin):
         self.name = name
@@ -36,7 +35,7 @@ class Post(db.Model): # blog posts within created blog
     
     
     def __init__(self, blog, author, title, body, category, image=None, slug=None, publish_date=None, live=True):
-        self.blog_id = blog.id # blog and author passed as object. so query the blog, author etc and add their id.
+        self.blog_id = blog.id # blog and author passed as object.
         self.author_id = author.id
         self.title = title
         self.body = body

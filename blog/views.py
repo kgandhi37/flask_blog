@@ -1,15 +1,15 @@
-from flask_blog import app # need this in every view - flask_blog same name as root folder (init file)
-from flask import render_template, redirect, flash, url_for, session, abort, request # abort for http returns such as 403
+from flask_blog import app 
+from flask import render_template, redirect, flash, url_for, session, abort, request 
 from blog.form import SetupForm, PostForm, CommentForm
-from flask_blog import db, uploaded_images # for operations
+from flask_blog import db, uploaded_images 
 from author.models import Author # importing author model
-from blog.models import Blog, Post, Category, Comment # importing blog model
+from blog.models import Blog, Post, Category, Comment 
 from author.decorators import login_required, author_required
 import bcrypt # for secure passwords
 from slugify import slugify
 
 # for pagination
-POSTS_PER_PAGE = 4 #okay to set constants in controller as long as only used in this controller otherwise make it global,setting file.
+POSTS_PER_PAGE = 4
 
 @app.route('/')
 @app.route('/index')
@@ -35,7 +35,7 @@ def admin(page=1):
     else:
         abort(403)
     
-@app.route('/setup', methods=('GET', 'POST')) # remember methods when posting otherwise will throw up error
+@app.route('/setup', methods=('GET', 'POST')) 
 def setup():
     form = SetupForm()
     error = ""
@@ -53,7 +53,7 @@ def setup():
             True # is_author
             )
         db.session.add(author)
-        db.session.flush() # trick, simulate op, will give us id but won't edit db, check if transaction will go well
+        db.session.flush() 
         if author.id:
             blog = Blog(
                 form.name.data,
@@ -62,7 +62,7 @@ def setup():
             db.session.add(blog)
             db.session.flush()
         else:
-            db.session.rollback() # undo operations and go back if error, is author.id is not called thi will happen
+            db.session.rollback() # undo operations and go back if error
             error = "Error creating user"
         if author.id and blog.id:
             db.session.commit()
@@ -137,7 +137,7 @@ def article(slug):
         db.session.add(comment)
         db.session.commit()
         flash("Comment posted!")
-    return render_template('blog/article.html', post=post, comments=comments, form=form, is_comment=is_comment) # running the returned object from query above "post" in the article file
+    return render_template('blog/article.html', post=post, comments=comments, form=form, is_comment=is_comment) 
     
 @app.route('/edit/<int:post_id>', methods=('GET','POST'))
 @author_required
@@ -169,7 +169,7 @@ def edit(post_id):
 
 
 
-@app.route('/delete/<int:post_id>') # remember to add tha <> when passing through vars/objects etc
+@app.route('/delete/<int:post_id>') 
 @author_required
 def delete(post_id):
     post = Post.query.filter_by(id=post_id).first_or_404()
